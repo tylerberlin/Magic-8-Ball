@@ -10,15 +10,18 @@ import SwiftUI
 struct EightBall: View {
     @State var randomValue = 0
     @State var rotation = 0.0
-    @State var userQuestion = "" // User's question
+    @State var userQuestion = "" // The user's question
+    @State var isTextFieldDisabled = false
+    let sounds = ["sound1", "sound2", "sound3", "sound4", "sound5", "sound6", "sound7", "sound8", "sound9", "sound10","sound11", "sound12", "sound13", "sound14", "sound15","sound16", "sound17", "sound18","sound19", "sound20"]
     let phrase: String
+    let soundPlayer = Sounds()
     var body: some View {
         ZStack {
-            // Sets the background to black
+            // Displays the background to black
             Color.black.ignoresSafeArea()
             VStack {
-                // Displays the phrase from ContentView
-                H1CustomText(text:(phrase))
+                // Shows the phrase from ContentView
+                HeadingCustomText(text:(phrase))
                     .font(.title).bold()
                     .foregroundColor(Color.white)
                     .padding(.top, 40)
@@ -36,24 +39,26 @@ struct EightBall: View {
                     .padding(.bottom, 50)
                 
                 VStack {
-                    // Input field for the user to type their question
+                    // Ask 
                     TextField("Ask your question...", text: $userQuestion)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .foregroundColor(.black)
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(10)
+                        .disabled(isTextFieldDisabled)
                     
-                    //Button to trigger the "Ask Question" action. Only works if there is a question in the TextField
-                    Button("Ask Question") {
+                    // Button to trigger the "Ask Question" action. Only works if there is a question in the TextField
+                    Button("Enter") {
                         if !userQuestion.isEmpty {
                             chooseRandom(times: 3)
                             withAnimation(.interpolatingSpring(stiffness: 10, damping: 2)) {
                                 rotation += 720 // Spins the 8-ball image
                             }
+                            isTextFieldDisabled = true
                         }
                     }
                     .buttonStyle(CustomButtonStyle())
-                    //Makes the user hit the "Reset" button to ask another question after they have gotton a answer to the previus question.
+                    // Makes the user hit the "Reset" button to ask another question after they have gotten an answer to the previous question.
                     .disabled(randomValue != 0 || userQuestion.isEmpty)
                     Button("Reset") {
                         resetToOriginal()
@@ -63,28 +68,35 @@ struct EightBall: View {
             }
         }
     }
-    //Resets Everthing
+    // Resets Everything
     func resetToOriginal() {
         randomValue = 0
         rotation = 0
         userQuestion = ""
+        isTextFieldDisabled = false
     }
-    
-    // Responses vary based on the mode selected by the user. If the user selects "Normal," the responses will mimic those of a traditional Magic 8-Ball. If they choose "Nice," only positive responses will be displayed. On the other hand, selecting "Mean" will generate negative or rude responses.
+    // Responses vary based on the mode selected by the user. If the user selects "Normal," the responses will mimic a traditional Magic 8-Ball. If they choose "Nice," only positive responses will be displayed. On the other hand, selecting "Mean" will generate negative responses.
     func chooseRandom(times: Int) {
         if times > 0 {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                if phrase.contains("Mean") {
-                    randomValue = Int.random(in: 11...20)
-                } else if phrase.contains("Nice") {
-                    randomValue = Int.random(in: 1...10)
-                } else if phrase.contains("Regular") {
-                    randomValue = Int.random(in: 1...20)
-                } else if phrase.contains("Special"){
-                    randomValue = Int.random(in: 21...30)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                if self.phrase.contains("Mean") {
+                    self.randomValue = Int.random(in: 11...20)
+                } else if self.phrase.contains("Nice") {
+                    self.randomValue = Int.random(in: 1...10)
+                } else if self.phrase.contains("Regular") {
+                    self.randomValue = Int.random(in: 1...20)
                 }
-                chooseRandom(times: times - 1)
+                self.chooseRandom(times: times - 1)
             }
+        }
+        else {
+            playSoundForCurrentValue()
+        }
+    }
+    //The playSoundForCurrentValue function decides which sound to play based on a number called randomValue. It first checks if the number is within the range of sounds available(1-20). If it is, it finds the matching sound in a list and plays it.
+    func playSoundForCurrentValue() {
+        if (1...sounds.count).contains(randomValue) {
+            soundPlayer.playSound(named: sounds[randomValue - 1])
         }
     }
 }
