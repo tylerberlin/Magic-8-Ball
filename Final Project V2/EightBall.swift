@@ -10,8 +10,8 @@ import SwiftUI
 struct EightBall: View {
     @State var randomValue = 0
     @State var rotation = 0.0
-    @State var userQuestion = "" // The user's question
-    @State var isTextFieldDisabled = false
+    @State var userQuestion = "" // String that holds The user's question.
+    @State var isTextFieldDisabled = false //Boolean to determin whether to dissable TextField or not.
     let sounds = ["sound1", "sound2", "sound3", "sound4", "sound5", "sound6", "sound7", "sound8", "sound9", "sound10","sound11", "sound12", "sound13", "sound14", "sound15","sound16", "sound17", "sound18","sound19", "sound20"]
     let phrase: String
     let soundPlayer = Sounds()
@@ -20,7 +20,7 @@ struct EightBall: View {
             // Displays the background to black
             Color.black.ignoresSafeArea()
             VStack {
-                // Shows the phrase from ContentView
+                // Shows the phrase selected from ContentView
                 HeadingCustomText(text:(phrase))
                     .font(.title).bold()
                     .foregroundColor(Color.white)
@@ -39,7 +39,7 @@ struct EightBall: View {
                     .padding(.bottom, 50)
                 
                 VStack {
-                    // Ask 
+                    // Users TextField to ask their question.
                     TextField("Ask your question...", text: $userQuestion)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .foregroundColor(.black)
@@ -47,7 +47,7 @@ struct EightBall: View {
                         .cornerRadius(10)
                         .disabled(isTextFieldDisabled)
                     
-                    // Button to trigger the "Ask Question" action. Only works if there is a question in the TextField
+                    // Button to trigger the "Ask Question" action. Only works if there is a question in the TextField. User hits enter and then it disables the user from typing in the TextField.
                     Button("Enter") {
                         if !userQuestion.isEmpty {
                             chooseRandom(times: 3)
@@ -98,12 +98,5 @@ struct EightBall: View {
         if (1...sounds.count).contains(randomValue) {
             soundPlayer.playSound(named: sounds[randomValue - 1])
         }
-    }
-}
-
-// Preview for testing
-struct EightBall_Previews: PreviewProvider {
-    static var previews: some View {
-        EightBall(phrase: "")
     }
 }
