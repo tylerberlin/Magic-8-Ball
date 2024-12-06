@@ -42,7 +42,7 @@ struct EightBall: View {
                     // Users TextField to ask their question.
                     TextField("Ask your question...", text: $userQuestion)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .foregroundColor(.black)
+                        .foregroundColor(.blue)
                         .background(Color.gray.opacity(0.2))
                         .cornerRadius(10)
                         .disabled(isTextFieldDisabled)
